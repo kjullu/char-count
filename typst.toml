@@ -1,0 +1,9 @@
+[package]
+name = "char-count"
+version = "0.1.0"
+entrypoint = "char-count.typ"
+authors = ["Mikkel"]
+license = "MIT"
+description = "Count grapheme clusters in Typst strings, content, and complete documents."
+categories = ["utility"]
+compiler = "0.14.0"
