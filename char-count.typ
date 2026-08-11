@@ -1,3 +1,6 @@
+// char-count: count visible grapheme clusters in strings and Typst content.
+
+/// Add the numeric values from two dictionaries, treating missing keys as 0.
 #let dictionary-sum(a, b) = {
   let result = (:)
   for key in (a.keys() + b.keys()).dedup() {
@@ -6,10 +9,14 @@
   result
 }
 
+/// Count grapheme clusters in a string.
+///
+/// Returns `(characters-with-spaces: int)`.
 #let string-char-count(string) = (
   characters-with-spaces: string.clusters().len(),
 )
 
+/// Element names ignored by `char-count-of` and `char-count` by default.
 #let IGNORED_ELEMENTS = (
   "bibliography",
   "outline",
@@ -59,6 +66,9 @@
   })
 }
 
+/// Traverse content, apply `f` to text-like leaves, and return nested results.
+///
+/// This is a low-level helper. Most callers should use `char-count-of`.
 #let map-tree(f, content, exclude: IGNORED_ELEMENTS) = {
   if content == none { return none }
 
@@ -120,6 +130,13 @@
   map-subtree(content)
 }
 
+/// Count grapheme clusters in a string or content value.
+///
+/// - `content`: A string or Typst content.
+/// - `exclude`: Additional element functions, element-name strings, labels, or
+///   simple `element.where(..)` selectors to omit with their descendants.
+///
+/// Returns `(characters-with-spaces: int)`.
 #let char-count-of(content, exclude: ()) = {
   if type(content) == str {
     return string-char-count(content)
@@ -133,6 +150,9 @@
     .fold(string-char-count(""), dictionary-sum)
 }
 
+/// Read one field from the final document-wide count.
+///
+/// Use `char-count` as a show rule before calling this function.
 #let global-total(field) = context {
   let stats = state("charometer").final()
 
@@ -156,10 +176,15 @@
   stats.at(field)
 }
 
+/// The final document-wide number of grapheme clusters, including spaces.
+///
+/// Requires `#show: char-count` before the document body.
 #let total-characters-with-spaces = global-total(
   "characters-with-spaces",
 )
 
+/// A show rule that renders content unchanged and adds its count to the global
+/// total. Pass `exclude` to omit additional elements and their descendants.
 #let char-count(content, exclude: ()) = {
   let stats = char-count-of(content, exclude: exclude)
 
