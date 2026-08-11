@@ -1,9 +1,9 @@
 #let dictionary-sum(a, b) = {
-  let c = (:)
-  for k in (a.keys() + b.keys()).dedup() {
-    c.insert(k, a.at(k, default: 0) + b.at(k, default: 0))
+  let result = (:)
+  for key in (a.keys() + b.keys()).dedup() {
+    result.insert(key, a.at(key, default: 0) + b.at(key, default: 0))
   }
-  c
+  result
 }
 
 #let string-char-count(string) = (
@@ -33,25 +33,27 @@
 )
 
 #let parse-basic-where-selector(selector) = {
-  let match = repr(selector).match(regex("^([\\w]+)\\.where(.*)$"))
-  if match == none {
+  // Typst does not expose a selector's target and fields directly. Limit this
+  // representation-based fallback to the simple form we can interpret safely.
+  let matched = repr(selector).match(regex("^([\\w]+)\\.where(.*)$"))
+  if matched == none {
     panic("Only `element.where(key: value, ..)` selectors are supported.")
   }
-  let (element-fn, fields) = match.captures
+  let (element-fn, fields) = matched.captures
   (element-fn: element-fn, fields: eval(fields))
 }
 
 #let interpret-exclude-patterns(exclude) = {
-  exclude.map(element-fn => {
-    if type(element-fn) in (str, label, dictionary) { element-fn }
-    else if type(element-fn) == function { repr(element-fn) }
-    else if type(element-fn) == selector {
-      parse-basic-where-selector(element-fn)
+  exclude.map(pattern => {
+    if type(pattern) in (str, label, dictionary) { pattern }
+    else if type(pattern) == function { repr(pattern) }
+    else if type(pattern) == selector {
+      parse-basic-where-selector(pattern)
     } else {
       panic(
         "Exclude patterns must be element functions, strings, "
           + "selectors, or labels; got:",
-        element-fn,
+        pattern,
       )
     }
   })
@@ -60,60 +62,62 @@
 #let map-tree(f, content, exclude: IGNORED_ELEMENTS) = {
   if content == none { return none }
 
+  // Normalize patterns once instead of repeating the work for every node.
   let exclude = interpret-exclude-patterns(exclude)
-  let map-subtree = map-tree.with(f, exclude: exclude)
-
-  let fn = repr(content.func())
-  let fields = content.fields().keys()
-
   let exclude-selectors = exclude.filter(
-    e => type(e) == dictionary and "element-fn" in e,
+    pattern => type(pattern) == dictionary and "element-fn" in pattern,
   )
 
-  for (element-fn, wanted-fields) in exclude-selectors {
-    if fn == element-fn {
-      if not wanted-fields.pairs().any(
-        ((key, value)) => content.at(key, default: value) != value,
-      ) {
-        return none
+  let map-subtree(content) = {
+    if content == none { return none }
+
+    let element-name = repr(content.func())
+    let fields = content.fields()
+
+    for (element-fn, fields: wanted-fields) in exclude-selectors {
+      if element-name == element-fn {
+        let fields-match = wanted-fields.pairs().all(
+          ((key, value)) => content.at(key, default: value) == value,
+        )
+        if fields-match { return none }
       }
+    }
+
+    if element-name in exclude {
+      none
+    } else if content.at("label", default: none) in exclude {
+      none
+    } else if element-name in ("text", "raw") {
+      f(content.text)
+    } else if element-name == "space" {
+      f(" ")
+    } else if element-name == "linebreak" {
+      f("\n")
+    } else if element-name == "parbreak" {
+      f("\n\n")
+    } else if element-name == "pagebreak" {
+      f("\n\n\n\n")
+    } else if element-name == "smartquote" {
+      f(if content.double { "\"" } else { "'" })
+    } else if "children" in fields {
+      content.children.map(map-subtree).filter(result => result != none)
+    } else if element-name == "figure" {
+      (
+        if "figure-body" not in exclude { map-subtree(content.body) },
+        if "caption" in fields and "caption" not in exclude {
+          map-subtree(content.caption)
+        },
+      ).filter(result => result != none)
+    } else if element-name == "styled" {
+      map-subtree(content.child)
+    } else if "body" in fields {
+      map-subtree(content.body)
+    } else {
+      none
     }
   }
 
-  if fn in exclude {
-    none
-  } else if content.at("label", default: none) in exclude {
-    none
-  } else if fn in ("text", "raw") {
-    f(content.text)
-  } else if fn == "space" {
-    f(" ")
-  } else if fn == "linebreak" {
-    f("\n")
-  } else if fn == "parbreak" {
-    f("\n\n")
-  } else if fn == "pagebreak" {
-    f("\n\n\n\n")
-  } else if fn == "smartquote" {
-    f(if content.double { "\"" } else { "'" })
-  } else if "children" in fields {
-    content.children
-      .map(map-subtree)
-      .filter(x => x != none)
-  } else if fn == "figure" {
-    (
-      if "figure-body" not in exclude { map-subtree(content.body) },
-      if "caption" in content.fields() and "caption" not in exclude {
-        map-subtree(content.caption)
-      },
-    ).filter(x => x != none)
-  } else if fn == "styled" {
-    map-subtree(content.child)
-  } else if "body" in fields {
-    map-subtree(content.body)
-  } else {
-    none
-  }
+  map-subtree(content)
 }
 
 #let char-count-of(content, exclude: ()) = {
@@ -121,9 +125,9 @@
     return string-char-count(content)
   }
 
-  let exclude = IGNORED_ELEMENTS + (exclude,).flatten()
+  let excluded-elements = IGNORED_ELEMENTS + (exclude,).flatten()
 
-  (map-tree(string-char-count, content, exclude: exclude),)
+  (map-tree(string-char-count, content, exclude: excluded-elements),)
     .filter(x => x != none)
     .flatten()
     .fold(string-char-count(""), dictionary-sum)
