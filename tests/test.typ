@@ -58,3 +58,22 @@ Body]) == 21)
 #assert(mapped-count(sample-figure, exclude: ("caption",)) == 4)
 
 All assertions passed.
+
+// Missing fields must not match arbitrary requested values.
+#assert(count([= Hello], exclude: heading.where(level: 2)) == 5)
+#assert(count([Hello], exclude: text.where(size: 20pt)) == 5)
+#assert(count([= Hello], exclude: heading.where(depth: 1)) == 0)
+#assert(count(heading(level: 2)[Hello], exclude: heading.where(level: 2)) == 0)
+
+// Both parts of a term item contribute, including nested formatting.
+#assert(count(terms.item([Term], [Definition])) == 14)
+#assert(count(terms.item([*Term*], [Definition])) == 14)
+#assert(count(terms.item([Term], [Definition]), exclude: terms.item) == 0)
+#assert(count(terms.item([*Term*], [Definition]), exclude: strong) == 10)
+
+// Grapheme boundaries are independent of inline formatting.
+#assert(count([a#text(fill: red)[́]]) == 1)
+#assert(count([👨#text(fill: red)[‍👩‍👧‍👦]]) == 1)
+#assert(count([a#emph[́]]) == count("á"))
+#assert(normal-pages([a#emph[́]]) == 1 / 2400)
+#assert(count([a#linebreak()#emph[́]]) == 3)

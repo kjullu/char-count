@@ -1,4 +1,4 @@
-// char-count: count visible grapheme clusters in strings and Typst content.
+// char-count: count source-content grapheme clusters in strings and Typst content.
 
 /// Add the numeric values from two dictionaries, treating missing keys as 0.
 #let dictionary-sum(a, b) = {
@@ -95,7 +95,7 @@
     for (element-fn, fields: wanted-fields) in exclude-selectors {
       if element-name == element-fn {
         let fields-match = wanted-fields.pairs().all(
-          ((key, value)) => content.at(key, default: value) == value,
+          ((key, value)) => key in fields and fields.at(key) == value,
         )
         if fields-match { return none }
       }
@@ -128,6 +128,9 @@
       ).filter(result => result != none)
     } else if element-name == "styled" {
       map-subtree(content.child)
+    } else if "term" in fields and "description" in fields {
+      (map-subtree(content.term), map-subtree(content.description))
+        .filter(result => result != none)
     } else if "body" in fields {
       map-subtree(content.body)
     } else {
@@ -153,16 +156,12 @@
 
   let excluded-elements = IGNORED_ELEMENTS + (exclude,).flatten()
 
-  let stats = (map-tree(string-char-count, content, exclude: excluded-elements),)
+  // Join text before segmenting so styling cannot split a grapheme cluster.
+  let text = (map-tree(x => x, content, exclude: excluded-elements),)
     .filter(x => x != none)
     .flatten()
-    .fold(string-char-count(""), dictionary-sum)
-
-  stats.insert(
-    "normal-pages",
-    stats.at("characters-with-spaces") / NORMAL_PAGE_CHARACTERS,
-  )
-  stats
+    .fold("", (text, fragment) => text + fragment)
+  string-char-count(text)
 }
 
 /// Read one field from the final document-wide count.
@@ -210,13 +209,12 @@
   let stats = char-count-of(content, exclude: exclude)
 
   state("charometer").update(old-stats => {
-    let total = if old-stats == none { stats }
-    else { dictionary-sum(old-stats, stats) }
-    total.insert(
-      "normal-pages",
-      total.at("characters-with-spaces") / NORMAL_PAGE_CHARACTERS,
+    let previous = if old-stats == none { 0 } else { old-stats.at("characters-with-spaces") }
+    let characters = stats.at("characters-with-spaces") + previous
+    (
+      characters-with-spaces: characters,
+      normal-pages: characters / NORMAL_PAGE_CHARACTERS,
     )
-    total
   })
 
   content

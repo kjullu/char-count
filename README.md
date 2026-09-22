@@ -5,6 +5,9 @@ content, or a complete document. One normal page is 2,400 characters including
 spaces. Equations, citations, images, and other non-prose elements are ignored
 by default.
 
+Counts describe source content, not final rendered output. Context-generated text
+and show-rule replacements require special care; see [counting limits](docs/char-count.md#counting-limits).
+
 ```typ
 #import "char-count.typ": char-count-of
 

@@ -65,3 +65,22 @@ statistics dictionary.
 Typst show rules apply from their declaration onward. Content before
 `#show: char-count` is not accumulated. Install the rule once at the start of
 the document or template for a single document-wide count.
+
+## Counting limits
+
+The total describes the source content passed to the rule, before layout. It is not a count of the final rendered document. Text generated inside `context` expressions is opaque and omitted. Text inserted or replaced by element or string show rules is not reflected in the total. Generated numbering and headers or footers supplied through page settings are also outside the traversed body.
+
+For example, `#context [Hello]` contributes no characters, and a show rule replacing `Hi` with `Hello world` still counts the original `Hi`. The displayed character and normal-page totals themselves are contextual and do not count toward their own totals.
+
+When you control a context expression, count its resolved text inside that expression:
+
+```typ
+#show: char-count
+
+#context {
+  let resolved = [Hello]
+  char-count(resolved)
+}
+```
+
+This adds `Hello` once because the outer traversal cannot see inside the context expression. Do not wrap ordinary, already-counted body text in another `char-count` call, since that would count it twice. Grapheme clusters are combined within each call, not across separate calls.

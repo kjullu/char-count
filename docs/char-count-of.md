@@ -77,3 +77,7 @@ Whitespace-like elements are represented as follows:
 
 Other containers are traversed through `children`, `body`, or their special
 figure fields when the container is not excluded.
+
+Term-list items contribute both their term and description. Inline text fragments are joined before counting grapheme clusters, so formatting within a combining sequence or joined emoji does not increase its count. Generated separators and numbering are not added.
+
+This function counts the source content tree. It cannot inspect the output of `context` expressions or apply layout-time show rules. See [counting limits](char-count.md#counting-limits) for details and a way to count text inside a context expression.

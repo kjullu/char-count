@@ -70,3 +70,5 @@ does not expose selector targets and fields directly.
 An exclusion removes the entire matched subtree. For example, excluding
 `emph` removes the emphasized text itself rather than merely ignoring its
 styling. Excluding multiple nested elements does not double-subtract content.
+
+Selectors compare only fields explicitly present in the input content. Missing fields never match, even if a set rule or Typst default would supply a value during layout. For headings written with `=` syntax, use `heading.where(depth: 2)` to exclude `==` headings. Use `heading.where(level: 2)` when the heading explicitly supplies `level: 2`. Inherited styles and computed heading levels are not resolved by this traversal.
