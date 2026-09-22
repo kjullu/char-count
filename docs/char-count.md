@@ -6,13 +6,14 @@ content's statistics to a Typst state value.
 ## Complete-document example
 
 ```typ
-#import "char-count.typ": char-count, total-characters-with-spaces
+#import "char-count.typ": char-count, total-characters-with-spaces, total-normal-pages
 
 #show: char-count
 
 Hello world.
 
 Characters: #total-characters-with-spaces
+Normal pages: #total-normal-pages
 ```
 
 Place the show rule before the content that should be counted. The displayed
@@ -49,13 +50,15 @@ value of the `characters-with-spaces` field:
 Total: #total-characters-with-spaces
 ```
 
+`total-normal-pages` reads the same document-wide count as Danish normal pages,
+using 2,400 characters including spaces per page.
+
 It must be used in a document where `#show: char-count` has initialized the
 global state. Otherwise it fails with a hint explaining how to enable the
 count.
 
 The lower-level `global-total(field)` reads any named field from the final
-statistics dictionary. In version 0.1.0, the only supported field is
-`"characters-with-spaces"`.
+statistics dictionary.
 
 ## Scope of the show rule
 

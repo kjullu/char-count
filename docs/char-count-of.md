@@ -10,6 +10,7 @@ dictionary.
 
 #let stats = char-count-of([Hello *Typst*!])
 #assert(stats.at("characters-with-spaces") == 12)
+#assert(stats.at("normal-pages") == 0.005)
 ```
 
 ## Signature
@@ -54,11 +55,13 @@ See [Exclusions](exclusions.md) for accepted patterns and limitations.
 The returned dictionary currently contains:
 
 ```typ
-(characters-with-spaces: 12)
+(characters-with-spaces: 12, normal-pages: 0.005)
 ```
 
 The count uses grapheme clusters rather than bytes or Unicode code points. It
-does not currently provide a character count with spaces removed.
+does not currently provide a character count with spaces removed. `normal-pages`
+divides `characters-with-spaces` by 2,400, the standard Danish normal-page
+length.
 
 ## Content mapping
 

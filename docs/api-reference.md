@@ -1,7 +1,7 @@
 # API reference
 
 This page documents every value exported by `char-count.typ`. Most users only
-need the three entries in the high-level API section.
+need the four entries in the high-level API section.
 
 ## High-level API
 
@@ -20,6 +20,12 @@ document state. See the [full guide](char-count.md).
 Contextual content containing the final document-wide count. It requires the
 `char-count` show rule.
 
+### `total-normal-pages`
+
+Contextual content containing the final document-wide normal-page count. One
+normal page is 2,400 characters including spaces. It requires the `char-count`
+show rule.
+
 ## Configuration
 
 ### `IGNORED_ELEMENTS`
@@ -28,6 +34,11 @@ An array of represented element-name strings used as the default exclusion
 list. The high-level functions always include these defaults. See
 [Exclusions](exclusions.md#default-exclusions).
 
+### `NORMAL_PAGE_CHARACTERS`
+
+The number of characters including spaces in one Danish normal page. Its value
+is `2400`.
+
 ## Low-level helpers
 
 These values are exported for advanced composition and testing. Their shapes
@@ -35,10 +46,13 @@ may expose implementation details, so prefer the high-level API when possible.
 
 ### `string-char-count(string)`
 
-Counts `string.clusters()` and returns:
+Counts `string.clusters()` and returns character and normal-page counts:
 
 ```typ
-(characters-with-spaces: string.clusters().len())
+(
+  characters-with-spaces: string.clusters().len(),
+  normal-pages: string.clusters().len() / NORMAL_PAGE_CHARACTERS,
+)
 ```
 
 ### `dictionary-sum(a, b)`

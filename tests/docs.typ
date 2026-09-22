@@ -3,6 +3,7 @@
 // README and documentation examples.
 #let readme = char-count-of([Hello *Typst*!])
 #assert(readme.at("characters-with-spaces") == 12)
+#assert(readme.at("normal-pages") == 12 / 2400)
 
 #assert(char-count-of("á").at("characters-with-spaces") == 1)
 #assert(char-count-of([Hello world]).at("characters-with-spaces") == 11)

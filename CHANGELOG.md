@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Report Danish normal pages using 2,400 characters including spaces per page.
+
 ## 0.1.0
 
 Initial packaged release.

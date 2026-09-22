@@ -4,6 +4,11 @@
   "characters-with-spaces",
 )
 
+#let normal-pages(content, exclude: ()) = char-count-of(
+  content,
+  exclude: exclude,
+).at("normal-pages")
+
 #let mapped-count(content, exclude: ()) = (
   (map-tree(string-char-count, content, exclude: exclude),)
     .filter(result => result != none)
@@ -16,6 +21,9 @@
 #assert(count("abc") == 3)
 #assert(count("á") == 1)
 #assert(count("👨‍👩‍👧‍👦") == 1)
+#assert(normal-pages("") == 0)
+#assert(normal-pages("a" * 2400) == 1)
+#assert(normal-pages("a" * 1200) == 0.5)
 
 #assert(count([Hello world]) == 11)
 #assert(count([*bold* and _emphasized_]) == 19)

@@ -7,3 +7,5 @@
 
 #passage contains #stats.at("characters-with-spaces") characters, including
 spaces.
+
+That is #stats.at("normal-pages") Danish normal pages.

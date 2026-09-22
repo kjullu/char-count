@@ -9,12 +9,20 @@
   result
 }
 
-/// Count grapheme clusters in a string.
+/// Number of characters, including spaces, in one Danish normal page.
+#let NORMAL_PAGE_CHARACTERS = 2400
+
+/// Count grapheme clusters and Danish normal pages in a string.
 ///
-/// Returns `(characters-with-spaces: int)`.
-#let string-char-count(string) = (
-  characters-with-spaces: string.clusters().len(),
-)
+/// Returns character and normal-page counts. One normal page is 2,400
+/// characters including spaces.
+#let string-char-count(string) = {
+  let characters = string.clusters().len()
+  (
+    characters-with-spaces: characters,
+    normal-pages: characters / NORMAL_PAGE_CHARACTERS,
+  )
+}
 
 /// Element names ignored by `char-count-of` and `char-count` by default.
 #let IGNORED_ELEMENTS = (
@@ -136,7 +144,8 @@
 /// - `exclude`: Additional element functions, element-name strings, labels, or
 ///   simple `element.where(..)` selectors to omit with their descendants.
 ///
-/// Returns `(characters-with-spaces: int)`.
+/// Returns character and normal-page counts. One normal page is 2,400
+/// characters including spaces.
 #let char-count-of(content, exclude: ()) = {
   if type(content) == str {
     return string-char-count(content)
@@ -144,10 +153,16 @@
 
   let excluded-elements = IGNORED_ELEMENTS + (exclude,).flatten()
 
-  (map-tree(string-char-count, content, exclude: excluded-elements),)
+  let stats = (map-tree(string-char-count, content, exclude: excluded-elements),)
     .filter(x => x != none)
     .flatten()
     .fold(string-char-count(""), dictionary-sum)
+
+  stats.insert(
+    "normal-pages",
+    stats.at("characters-with-spaces") / NORMAL_PAGE_CHARACTERS,
+  )
+  stats
 }
 
 /// Read one field from the final document-wide count.
@@ -183,14 +198,25 @@
   "characters-with-spaces",
 )
 
+/// The final document-wide number of Danish normal pages.
+///
+/// One normal page is 2,400 characters including spaces. Requires
+/// `#show: char-count` before the document body.
+#let total-normal-pages = global-total("normal-pages")
+
 /// A show rule that renders content unchanged and adds its count to the global
 /// total. Pass `exclude` to omit additional elements and their descendants.
 #let char-count(content, exclude: ()) = {
   let stats = char-count-of(content, exclude: exclude)
 
   state("charometer").update(old-stats => {
-    if old-stats == none { stats }
+    let total = if old-stats == none { stats }
     else { dictionary-sum(old-stats, stats) }
+    total.insert(
+      "normal-pages",
+      total.at("characters-with-spaces") / NORMAL_PAGE_CHARACTERS,
+    )
+    total
   })
 
   content

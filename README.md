@@ -1,14 +1,16 @@
 # char-count
 
-Count Unicode grapheme clusters in strings, Typst content, or a complete
-document. Spaces and paragraph breaks are included; equations, citations,
-images, and other non-prose elements are ignored by default.
+Count Unicode grapheme clusters and Danish normal pages in strings, Typst
+content, or a complete document. One normal page is 2,400 characters including
+spaces. Equations, citations, images, and other non-prose elements are ignored
+by default.
 
 ```typ
 #import "char-count.typ": char-count-of
 
 #let count = char-count-of([Hello *Typst*!])
 #count.at("characters-with-spaces") // 12
+#count.at("normal-pages") // 0.005
 ```
 
 ## Install
@@ -17,13 +19,13 @@ Copy [`char-count.typ`](char-count.typ) into your project and import the
 functions you need:
 
 ```typ
-#import "char-count.typ": char-count, char-count-of, total-characters-with-spaces
+#import "char-count.typ": char-count, char-count-of, total-characters-with-spaces, total-normal-pages
 ```
 
 When installed as a local Typst package, use:
 
 ```typ
-#import "@local/char-count:0.1.0": char-count, char-count-of, total-characters-with-spaces
+#import "@local/char-count:0.1.0": char-count, char-count-of, total-characters-with-spaces, total-normal-pages
 ```
 
 The package is implemented entirely in Typst and has no runtime dependencies.
