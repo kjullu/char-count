@@ -1,3 +1,4 @@
+// char-count v0.2.0
 // char-count: count source-content grapheme clusters in strings and Typst content.
 
 /// Add the numeric values from two dictionaries, treating missing keys as 0.
