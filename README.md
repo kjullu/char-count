@@ -1,68 +1,62 @@
 # char-count
 
-Count Unicode grapheme clusters and Danish normal pages in strings, Typst
-content, or a complete document. One normal page is 2,400 characters including
-spaces. Equations, citations, images, and other non-prose elements are ignored
-by default.
+Count the characters and Danish normal pages in a Typst document, so you can check an assignment against its length requirement without copying the text somewhere else.
 
-Counts describe source content, not final rendered output. Context-generated text
-and show-rule replacements require special care; see [counting limits](docs/char-count.md#counting-limits).
+It counts what a reader sees as one character, so `á` and `👨‍👩‍👧‍👦` each count as 1. Equations, citations, images, figures, and other non-prose content are left out by default. One normal page is 2,400 characters including spaces.
 
 ```typ
-#import "char-count.typ": char-count-of
+#import "char-count.typ": char-count, char-count-of, total-summary
 
-#let count = char-count-of([Hello *Typst*!])
-#count.at("characters-with-spaces") // 12
-#count.at("normal-pages") // 0.005
-```
+#char-count-of([Hello *Typst*!])
+// (characters-with-spaces: 12, characters-without-spaces: 11, normal-pages: 0.005)
 
-## Count a whole document
-
-```typ
-#import "char-count.typ": char-count, final-stats, total-summary
-
-// Count everything after this line, except block quotes and footnotes.
-#show: char-count.with(exclude: quote, footnotes: false)
+// Count the rest of the document, without footnotes.
+#show: char-count.with(footnotes: false)
 
 = My assignment
 
 The text of the assignment goes here.
 
-// Shows something like "12 345 tegn · 5,14 normalsider".
-#total-summary
-
-// Numbers you can calculate with, inside `context`.
-#context calc.round(final-stats().normal-pages, digits: 1)
+#total-summary // for example "12 345 tegn · 5,14 normalsider"
 ```
+
+The count covers the source text, not the rendered output. Text made inside `context` or by show rules is not counted. [Counting limits](docs/char-count.md#counting-limits) explains how to handle it.
 
 ## Install
 
-Copy [`char-count.typ`](char-count.typ) into your project and import the
-functions you need:
+Copy [`char-count.typ`](char-count.typ) into your project and import it:
 
 ```typ
 #import "char-count.typ": char-count, char-count-of, final-stats, total-summary
 ```
 
-When installed as a local Typst package, use:
+Or install it as a local Typst package and use:
 
 ```typ
 #import "@local/char-count:0.1.0": char-count, char-count-of, final-stats, total-summary
 ```
 
-The package is implemented entirely in Typst and has no runtime dependencies.
+It needs Typst 0.14 or newer and has no dependencies.
 
 ## Documentation
 
-- [Documentation overview](docs/README.md)
-- [`char-count-of`](docs/char-count-of.md) — count one string or content value
-- [`char-count`](docs/char-count.md) — count a complete document with a show rule
-- [Exclusions](docs/exclusions.md) — control which content is omitted
-- [API reference](docs/api-reference.md) — every exported value and helper
+- [Overview](docs/README.md) lists the main functions and the result fields.
+- [`char-count-of`](docs/char-count-of.md) counts one string or piece of content, and shows how breaks and tables are counted.
+- [`char-count`](docs/char-count.md) counts a whole document and shows the totals, rounded or as numbers.
+- [Exclusions](docs/exclusions.md) covers the defaults and how to leave out more, like headings or labelled text.
+- [API reference](docs/api-reference.md) lists every exported value, including low-level helpers.
 
-A compilable example covering the complete public API is available in
-[`examples/all-functions.typ`](examples/all-functions.typ). See the
-[changelog](CHANGELOG.md) for release history.
+[`examples/all-functions.typ`](examples/all-functions.typ) uses the whole public API in one file. Release history is in the [changelog](CHANGELOG.md).
+
+## Testing
+
+Compile each file in `tests/` from the repository root. A file passes if it compiles:
+
+```sh
+for f in tests/*.typ; do typst compile --root . "$f" /tmp/test.pdf; done
+```
+
+`tests/package-import.typ` needs the package installed as `@local/char-count:0.1.0`.
 
 ## License
 
