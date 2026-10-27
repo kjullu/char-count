@@ -1,5 +1,7 @@
 # char-count
 
+Version 0.2.0
+
 Count the characters and Danish normal pages in a Typst document, so you can check an assignment against its length requirement without copying the text somewhere else.
 
 It counts what a reader sees as one character, so `á` and `👨‍👩‍👧‍👦` each count as 1. Equations, citations, images, figures, and other non-prose content are left out by default. One normal page is 2,400 characters including spaces.
@@ -33,7 +35,7 @@ Copy [`char-count.typ`](char-count.typ) into your project and import it:
 Or install it as a local Typst package and use:
 
 ```typ
-#import "@local/char-count:0.1.0": char-count, char-count-of, final-stats, total-summary
+#import "@local/char-count:0.2.0": char-count, char-count-of, final-stats, total-summary
 ```
 
 It needs Typst 0.14 or newer and has no dependencies.
@@ -56,7 +58,7 @@ Compile each file in `tests/` from the repository root. A file passes if it comp
 for f in tests/*.typ; do typst compile --root . "$f" /tmp/test.pdf; done
 ```
 
-`tests/package-import.typ` needs the package installed as `@local/char-count:0.1.0`.
+`tests/package-import.typ` needs the package installed as `@local/char-count:0.2.0`.
 
 ## License
 
