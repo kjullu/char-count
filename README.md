@@ -1,8 +1,6 @@
 # char-count
 
-Version 0.2.0
-
-Count the characters and Danish normal pages in a Typst document, so you can check an assignment against its length requirement without copying the text somewhere else.
+Count the characters and Danish normal pages (2400 chars) in a Typst document, so you can check an assignment against its length requirement without copying the text somewhere else.
 
 It counts what a reader sees as one character, so `á` and `👨‍👩‍👧‍👦` each count as 1. Equations, citations, images, figures, and other non-prose content are left out by default. One normal page is 2,400 characters including spaces.
 
