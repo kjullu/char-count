@@ -6,7 +6,7 @@ content's statistics to a Typst state value.
 ## Complete-document example
 
 ```typ
-#import "char-count.typ": char-count, total-characters-with-spaces, total-normal-pages
+#import "char-count.typ": char-count, total-characters-with-spaces, total-normal-pages, total-summary
 
 #show: char-count
 
@@ -14,6 +14,7 @@ Hello world.
 
 Characters: #total-characters-with-spaces
 Normal pages: #total-normal-pages
+Summary: #total-summary
 ```
 
 Place the show rule before the content that should be counted. The displayed
@@ -22,7 +23,7 @@ total is resolved contextually from the final state.
 ## Signature
 
 ```typ
-char-count(content, exclude: ()) -> content
+char-count(content, exclude: (), footnotes: true, figures: false) -> content
 ```
 
 ### `content`
@@ -41,6 +42,14 @@ Additional exclusion patterns, with the same forms and behavior as
 #show: char-count.with(exclude: (heading, emph))
 ```
 
+### `footnotes` and `figures`
+
+Same as in [`char-count-of`](char-count-of.md#footnotes):
+
+```typ
+#show: char-count.with(footnotes: false, figures: true)
+```
+
 ## Reading the total
 
 `total-characters-with-spaces` is contextual content containing the final
@@ -51,7 +60,24 @@ Total: #total-characters-with-spaces
 ```
 
 `total-normal-pages` reads the same document-wide count as Danish normal pages,
-using 2,400 characters including spaces per page.
+using 2,400 characters including spaces per page. It is not rounded.
+
+`total-characters-without-spaces` shows the count with whitespace left out.
+
+`total-summary` shows the total the Danish way, with normal pages rounded to two decimals:
+
+```typ
+#total-summary // 12 345 tegn · 5,14 normalsider
+```
+
+For your own formatting, `format-danish(stats, digits: 2)` formats any statistics dictionary. To calculate with the totals, call `final-stats()` inside `context`. It returns the numbers, not content:
+
+```typ
+#context {
+  let stats = final-stats()
+  [#calc.round(stats.normal-pages, digits: 1) normal pages]
+}
+```
 
 It must be used in a document where `#show: char-count` has initialized the
 global state. Otherwise it fails with a hint explaining how to enable the

@@ -16,19 +16,38 @@ and show-rule replacements require special care; see [counting limits](docs/char
 #count.at("normal-pages") // 0.005
 ```
 
+## Count a whole document
+
+```typ
+#import "char-count.typ": char-count, final-stats, total-summary
+
+// Count everything after this line, except block quotes and footnotes.
+#show: char-count.with(exclude: quote, footnotes: false)
+
+= My assignment
+
+The text of the assignment goes here.
+
+// Shows something like "12 345 tegn · 5,14 normalsider".
+#total-summary
+
+// Numbers you can calculate with, inside `context`.
+#context calc.round(final-stats().normal-pages, digits: 1)
+```
+
 ## Install
 
 Copy [`char-count.typ`](char-count.typ) into your project and import the
 functions you need:
 
 ```typ
-#import "char-count.typ": char-count, char-count-of, total-characters-with-spaces, total-normal-pages
+#import "char-count.typ": char-count, char-count-of, final-stats, total-summary
 ```
 
 When installed as a local Typst package, use:
 
 ```typ
-#import "@local/char-count:0.1.0": char-count, char-count-of, total-characters-with-spaces, total-normal-pages
+#import "@local/char-count:0.1.0": char-count, char-count-of, final-stats, total-summary
 ```
 
 The package is implemented entirely in Typst and has no runtime dependencies.

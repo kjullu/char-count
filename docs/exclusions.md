@@ -8,13 +8,11 @@ argument adds patterns; it does not remove the defaults.
 The exported `IGNORED_ELEMENTS` array contains these element names:
 
 ```text
-bibliography, outline, cite, display, equation, h, hide, image, line,
-locate, figure, metadata, path, polygon, ref, repeat, style, update, v
+bibliography, outline, cite, counter-update, equation, h, hide, image,
+line, figure, metadata, path, polygon, ref, repeat, state-update, v
 ```
 
-Because `figure` is excluded, both its body and caption are omitted by the
-high-level counting functions unless you use the low-level `map-tree` helper
-with a different exclusion list.
+Because `figure` is excluded, both its body and caption are omitted. Pass `figures: true` to count them. Footnotes are counted by default; pass `footnotes: false` to omit them.
 
 ## Element functions
 
@@ -25,12 +23,12 @@ Pass an element function to omit every instance of that element:
 #char-count-of([Title #footnote[omit]], exclude: (emph, footnote))
 ```
 
-A single value and an array are both accepted.
+A single value and an array are both accepted. Element functions are compared directly, so `exclude: list.item` leaves `enum.item` and `terms.item` alone, and `table.cell` leaves `grid.cell` alone.
 
 ## Element-name strings
 
 Strings use Typst's represented element names and are useful when a function
-is inconvenient to pass:
+is inconvenient to pass. Some elements share a name. `"item"` matches list, enum, and term items, and `"cell"` matches table and grid cells. Pass the function instead when that matters:
 
 ```typ
 #char-count-of([Keep #emph[omit]], exclude: "emph")
@@ -63,7 +61,7 @@ Selectors can match element fields:
 Only selectors represented as `element.where(key: value, ..)` are supported.
 Compound selectors, regex selectors, selector combinations, and arbitrary
 selector transformations are rejected. This limitation exists because Typst
-does not expose selector targets and fields directly.
+does not expose selector targets and fields directly. For the same reason, selectors match by represented name, so `table.cell.where(x: 0)` also matches grid cells with `x: 0`, and `list.item.where(..)` also matches enum and term items.
 
 ## Subtree behavior
 

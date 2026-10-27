@@ -12,6 +12,8 @@ joined family emoji each count as one character.
 | [`char-count`](char-count.md) | Accumulate a count across a complete document. |
 | [`total-characters-with-spaces`](char-count.md#reading-the-total) | Display the final document-wide character total. |
 | [`total-normal-pages`](char-count.md#reading-the-total) | Display the final document-wide normal-page total. |
+| [`total-summary`](char-count.md#reading-the-total) | Display the total as `12 345 tegn · 5,14 normalsider`. |
+| [`final-stats`](char-count.md#reading-the-total) | Get the final totals as numbers inside `context`. |
 
 For most one-off counts, use `char-count-of`. Use `char-count` as a show rule
 when the total must include the document body.
@@ -31,6 +33,7 @@ the calling convention. It provides these fields:
 | Field | Type | Meaning |
 | --- | --- | --- |
 | `characters-with-spaces` | `int` | Grapheme clusters, including represented whitespace. |
+| `characters-without-spaces` | `int` | Grapheme clusters that are not whitespace. |
 | `normal-pages` | `float` | Danish normal pages of 2,400 characters including spaces. |
 
 See [Exclusions](exclusions.md) for the default ignored elements and ways to
