@@ -1,14 +1,26 @@
 # Changelog
 
-## Unreleased
+## 0.2.0
 
-- Avoid matching exclusion selectors against missing fields.
-- Count both terms and descriptions in term lists.
+### Added
+
+- Report Danish normal pages, using 2,400 characters including spaces per page.
+- Add `characters-without-spaces`, `total-characters-without-spaces`, `final-stats`, `format-danish`, and `total-summary`.
+- Add `footnotes` and `figures` options to `char-count-of` and `char-count`.
+
+### Fixed
+
+- Excluding an element function no longer removes other elements with the same name, like `enum.item` when excluding `list.item`.
+- Keep table cells, list items, and other blocks apart when counting grapheme clusters, also when they are excluded.
 - Count grapheme clusters across inline formatting boundaries.
+- Count both terms and descriptions in term lists.
+- Avoid matching exclusion selectors against missing fields.
 - Calculate normal pages from the accumulated character count.
-- Document source-content counting limits and counting inside context expressions.
 
-- Report Danish normal pages using 2,400 characters including spaces per page.
+### Changed
+
+- Drop element names from older Typst versions from `IGNORED_ELEMENTS`.
+- Rewrite the README and document source-content counting limits and counting inside context expressions.
 
 ## 0.1.0
 

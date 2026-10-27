@@ -1,4 +1,4 @@
-#import "@local/char-count:0.1.0": char-count, char-count-of, total-characters-with-spaces
+#import "@local/char-count:0.2.0": char-count, char-count-of, total-characters-with-spaces
 
 #assert(char-count-of([Package import]).at("characters-with-spaces") == 14)
 

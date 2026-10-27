@@ -1,6 +1,6 @@
 [package]
 name = "char-count"
-version = "0.1.0"
+version = "0.2.0"
 entrypoint = "char-count.typ"
 authors = ["Mikkel"]
 license = "MIT"

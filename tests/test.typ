@@ -57,8 +57,6 @@ Body]) == 21)
 #assert(mapped-count(sample-figure, exclude: ("figure-body",)) == 7)
 #assert(mapped-count(sample-figure, exclude: ("caption",)) == 4)
 
-All assertions passed.
-
 // Missing fields must not match arbitrary requested values.
 #assert(count([= Hello], exclude: heading.where(level: 2)) == 5)
 #assert(count([Hello], exclude: text.where(size: 20pt)) == 5)
@@ -77,3 +75,49 @@ All assertions passed.
 #assert(count([a#emph[́]]) == count("á"))
 #assert(normal-pages([a#emph[́]]) == 1 / 2400)
 #assert(count([a#linebreak()#emph[́]]) == 3)
+
+// Element functions that share a represented name are told apart.
+#let lists = [- bullet
++ numbered]
+#assert(count(lists, exclude: list.item) == 9)
+#assert(count(lists, exclude: enum.item) == 7)
+#assert(count(table([a], [b]), exclude: grid.cell) == 2)
+
+// Grapheme clusters do not join across block boundaries.
+#assert(count(table([a], [́])) == 2)
+#assert(count(grid([a], [́])) == 2)
+#assert(count([- a
+- ́]) == 3)
+#assert(count(terms.item([a], [́])) == 2)
+
+// Excluded blocks still separate the text around them.
+#assert(count([a#heading[x]́], exclude: heading) == 2)
+#assert(char-count-of([a#footnote[x]́], footnotes: false).characters-with-spaces == 2)
+#assert(count([a#figure[x]́]) == 2)
+
+// Characters without spaces skip every whitespace cluster.
+#let stats = char-count-of([Hello world
+
+Again])
+#assert(stats.characters-with-spaces == 18)
+#assert(stats.characters-without-spaces == 15)
+#assert(char-count-of("a b\tc").characters-without-spaces == 3)
+
+// Footnotes count by default and can be turned off.
+#assert(count([Text#footnote[Note]]) == 8)
+#assert(char-count-of([Text#footnote[Note]], footnotes: false).characters-with-spaces == 4)
+
+// Figures are excluded by default and can be turned on.
+#let with-figure = [Before #figure([Body], caption: [Caption]) After]
+#assert(count(with-figure) == 13)
+#assert(char-count-of(with-figure, figures: true).characters-with-spaces == 24)
+
+// Danish display helper.
+#assert(format-danish(make-stats(12345, 0)) == "12 345 tegn · 5,14 normalsider")
+#assert(format-danish(make-stats(2400, 0)) == "2 400 tegn · 1,00 normalsider")
+#assert(format-danish(make-stats(2412, 0)) == "2 412 tegn · 1,01 normalsider")
+#assert(format-danish(make-stats(23988, 0)) == "23 988 tegn · 10,00 normalsider")
+#assert(format-danish(make-stats(120, 0), digits: 0) == "120 tegn · 0 normalsider")
+#assert(format-danish(make-stats(1234567, 0), digits: 1) == "1 234 567 tegn · 514,4 normalsider")
+
+All assertions passed.
