@@ -67,10 +67,16 @@ using 2,400 characters including spaces per page. It is not rounded.
 `total-summary` shows the total the Danish way, with normal pages rounded to two decimals:
 
 ```typ
-#total-summary // 12 345 tegn · 5,14 normalsider
+#total-summary // 12.345 tegn · 5,14 normalsider
 ```
 
-For your own formatting, `format-danish(stats, digits: 2)` formats any statistics dictionary. To calculate with the totals, call `final-stats()` inside `context`. It returns the numbers, not content:
+For your own formatting, `format-danish` formats any statistics dictionary. You can change the decimals, the thousands separator and the dot between the two numbers:
+
+```typ
+#context format-danish(final-stats(), digits: 1, thousands-separator: " ", separator: " – ")
+// 12 345 tegn – 5,1 normalsider
+```
+ To calculate with the totals, call `final-stats()` inside `context`. It returns the numbers, not content:
 
 ```typ
 #context {

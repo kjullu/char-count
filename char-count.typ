@@ -287,13 +287,24 @@
 /// `#show: char-count` before the document body.
 #let total-normal-pages = global-total("normal-pages")
 
-/// Format statistics the Danish way, e.g. `12 345 tegn · 5,14 normalsider`.
+/// Format statistics the Danish way, e.g. `12.345 tegn · 5,14 normalsider`.
 ///
 /// Normal pages are rounded half up to `digits` decimals for display only.
-#let format-danish(stats, digits: 2) = {
+/// `thousands-separator` goes between digit groups and `separator` between
+/// the character count and the normal pages.
+#let format-danish(
+  stats,
+  digits: 2,
+  thousands-separator: ".",
+  separator: " · ",
+) = {
   assert(
     type(digits) == int and digits >= 0,
     message: "`digits` must be a non-negative integer.",
+  )
+  assert(
+    type(thousands-separator) == str and type(separator) == str,
+    message: "`thousands-separator` and `separator` must be strings.",
   )
 
   let characters = str(stats.characters-with-spaces)
@@ -318,7 +329,7 @@
     "," + "0" * (digits - fraction.len()) + fraction
   }
 
-  groups.join(" ") + " tegn · " + pages-text + " normalsider"
+  groups.join(thousands-separator) + "\u{00A0}tegn" + separator + pages-text + " normalsider"
 }
 
 /// The final document-wide count formatted with `format-danish`.

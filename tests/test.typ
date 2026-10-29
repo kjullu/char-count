@@ -113,11 +113,12 @@ Again])
 #assert(char-count-of(with-figure, figures: true).characters-with-spaces == 24)
 
 // Danish display helper.
-#assert(format-danish(make-stats(12345, 0)) == "12 345 tegn · 5,14 normalsider")
-#assert(format-danish(make-stats(2400, 0)) == "2 400 tegn · 1,00 normalsider")
-#assert(format-danish(make-stats(2412, 0)) == "2 412 tegn · 1,01 normalsider")
-#assert(format-danish(make-stats(23988, 0)) == "23 988 tegn · 10,00 normalsider")
-#assert(format-danish(make-stats(120, 0), digits: 0) == "120 tegn · 0 normalsider")
-#assert(format-danish(make-stats(1234567, 0), digits: 1) == "1 234 567 tegn · 514,4 normalsider")
+#assert(format-danish(make-stats(12345, 0)) == "12.345\u{00A0}tegn · 5,14 normalsider")
+#assert(format-danish(make-stats(2400, 0)) == "2.400\u{00A0}tegn · 1,00 normalsider")
+#assert(format-danish(make-stats(2412, 0)) == "2.412\u{00A0}tegn · 1,01 normalsider")
+#assert(format-danish(make-stats(23988, 0)) == "23.988\u{00A0}tegn · 10,00 normalsider")
+#assert(format-danish(make-stats(120, 0), digits: 0) == "120\u{00A0}tegn · 0 normalsider")
+#assert(format-danish(make-stats(1234567, 0), digits: 1) == "1.234.567\u{00A0}tegn · 514,4 normalsider")
+#assert(format-danish(make-stats(12345, 0), thousands-separator: " ", separator: " – ") == "12 345\u{00A0}tegn – 5,14 normalsider")
 
 All assertions passed.

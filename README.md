@@ -17,7 +17,7 @@ It counts what a reader sees as one character, so `á` and `👨‍👩‍👧�
 
 The text of the assignment goes here.
 
-#total-summary // for example "12 345 tegn · 5,14 normalsider"
+#total-summary // for example "12.345 tegn · 5,14 normalsider"
 ```
 
 The count covers the source text, not the rendered output. Text made inside `context` or by show rules is not counted. [Counting limits](docs/char-count.md#counting-limits) explains how to handle it.

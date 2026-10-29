@@ -12,7 +12,7 @@ joined family emoji each count as one character.
 | [`char-count`](char-count.md) | Accumulate a count across a complete document. |
 | [`total-characters-with-spaces`](char-count.md#reading-the-total) | Display the final document-wide character total. |
 | [`total-normal-pages`](char-count.md#reading-the-total) | Display the final document-wide normal-page total. |
-| [`total-summary`](char-count.md#reading-the-total) | Display the total as `12 345 tegn · 5,14 normalsider`. |
+| [`total-summary`](char-count.md#reading-the-total) | Display the total as `12.345 tegn · 5,14 normalsider`. |
 | [`final-stats`](char-count.md#reading-the-total) | Get the final totals as numbers inside `context`. |
 
 For most one-off counts, use `char-count-of`. Use `char-count` as a show rule
