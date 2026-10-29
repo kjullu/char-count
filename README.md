@@ -33,7 +33,7 @@ Copy [`char-count.typ`](char-count.typ) into your project and import it:
 Or install it as a local Typst package and use:
 
 ```typ
-#import "@local/char-count:0.2.0": char-count, char-count-of, final-stats, total-summary
+#import "@local/char-count:0.3.0": char-count, char-count-of, final-stats, total-summary
 ```
 
 It needs Typst 0.14 or newer and has no dependencies.
@@ -56,7 +56,7 @@ Compile each file in `tests/` from the repository root. A file passes if it comp
 for f in tests/*.typ; do typst compile --root . "$f" /tmp/test.pdf; done
 ```
 
-`tests/package-import.typ` needs the package installed as `@local/char-count:0.2.0`.
+`tests/package-import.typ` needs the package installed as `@local/char-count:0.3.0`.
 
 ## License
 
