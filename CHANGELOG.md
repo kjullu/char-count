@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.3.0
+
+### Added
+
+- Add `thousands-separator` and `separator` options to `format-danish`.
+
+### Changed
+
+- `format-danish` and `total-summary` now write thousands with a dot, like `12.345 tegn`, instead of a space.
+- Keep the number and "tegn" on the same line with a no-break space.
+
+### Fixed
+
+- `total-summary` no longer gets an odd gap inside the number in justified text (#2).
+
 ## 0.2.0
 
 ### Added
